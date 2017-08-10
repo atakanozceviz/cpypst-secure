@@ -1,0 +1,109 @@
+{{define "settings"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <style>
+        .mainheader {
+            grid-area: header;
+        }
+
+        .settings {
+            grid-area: settings;
+        }
+
+        .mainfooter {
+            grid-area: footer;
+        }
+
+        .wrapper {
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-row-gap: 0;
+            grid-template-areas: "header" "settings" "footer";
+        }
+
+        table {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+
+    <header class="mainheader">
+        {{template "menu" .}}
+    </header>
+
+    <div class="settings">
+        <form id="form">
+            <table style="width:1%">
+                <tr>
+                    <th>Setting</th>
+                    <th style="width:1%">Enabled</th>
+                    <th style="width:1%"></th>
+                </tr>
+                <tr>
+                    <td>Incoming Clipboard</td>
+                    <td>{{.IncomingClip}}</td>
+                    <td>
+                        <button name="action" value="incomingclip">
+                            {{if .IncomingClip}}Disable{{end}}{{if not .IncomingClip}}Enable{{end}}
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Incoming File</td>
+                    <td>{{.IncomingFile}}</td>
+                    <td>
+                        <button name="action" value="incomingfile">
+                            {{if .IncomingFile}}Disable{{end}}{{if not .IncomingFile}}Enable{{end}}
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Outgoing Clipboard</td>
+                    <td>{{.OutgoingClip}}</td>
+                    <td>
+                        <button name="action" value="outgoingclip">
+                            {{if .OutgoingClip}}Disable{{end}}{{if not .OutgoingClip}}Enable{{end}}
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Outgoing File</td>
+                    <td>{{.OutgoingFile}}</td>
+                    <td>
+                        <button name="action" value="outgoingfile">
+                            {{if .OutgoingFile}}Disable{{end}}{{if not .OutgoingFile}}Enable{{end}}
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <footer class="mainfooter"></footer>
+
+    <script src="static/jquery.js"></script>
+    <script type="application/javascript">
+        $("button").click(function (e) {
+            e.preventDefault();
+            var action = $(this).attr('value');
+            $.ajax({
+                url: '/action?action=' + action,
+                success: window.location.reload(true)
+            });
+        })
+    </script>
+</div>
+</body>
+
+</html>
+{{end}}

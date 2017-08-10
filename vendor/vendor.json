@@ -1,0 +1,61 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "iE6Dtu/bF8ImMlyM4F7fKU3ktts=",
+			"path": "github.com/arschles/go-bindata-html-template",
+			"revision": "839a6918b9ff535f95246ef0f43edfdb4ed186be",
+			"revisionTime": "2017-01-23T18:28:18Z"
+		},
+		{
+			"checksumSHA1": "SNSgdp5ShDZ57VZqBkQ0PXJCJIM=",
+			"path": "github.com/atotto/clipboard",
+			"revision": "bb272b845f1112e10117e3e45ce39f690c0001ad",
+			"revisionTime": "2016-02-19T03:44:21Z"
+		},
+		{
+			"checksumSHA1": "GXOurDGgsLmJs0wounpdWZZRSGw=",
+			"path": "github.com/dgrijalva/jwt-go",
+			"revision": "a539ee1a749a2b895533f979515ac7e6e0f5b650",
+			"revisionTime": "2017-06-08T00:51:49Z"
+		},
+		{
+			"checksumSHA1": "7DxViusFRJ7UPH0jZqYatwDrOkY=",
+			"path": "github.com/elazarl/go-bindata-assetfs",
+			"revision": "30f82fa23fd844bd5bb1e5f216db87fd77b5eb43",
+			"revisionTime": "2017-02-27T21:27:28Z"
+		},
+		{
+			"checksumSHA1": "U6lX43KDDlNOn+Z0Yyww+ZzHfFo=",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "fc9e8d8ef48496124e79ae0df75490096eccf6fe",
+			"revisionTime": "2017-03-22T23:44:13Z"
+		},
+		{
+			"checksumSHA1": "VdpS+VIg+3+lhy02Qtu/0E4L5Co=",
+			"path": "github.com/vbauerster/mpb/cwriter",
+			"revision": "be19f2ae49b66657213af516b02fd0fac2a3ed2f",
+			"revisionTime": "2017-07-31T14:43:34Z"
+		},
+		{
+			"checksumSHA1": "erTm5uJPT/2QrsITxxrfFfcv8wI=",
+			"path": "github.com/vbauerster/mpb/decor",
+			"revision": "be19f2ae49b66657213af516b02fd0fac2a3ed2f",
+			"revisionTime": "2017-07-31T14:43:34Z"
+		},
+		{
+			"checksumSHA1": "Ws4nftdYhMEd8vZPFv1CMy1N8Nw=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "e42485b6e20ae7d2304ec72e535b103ed350cc02",
+			"revisionTime": "2017-08-09T17:40:02Z"
+		},
+		{
+			"checksumSHA1": "jtHnJffox9d+MoMv//vu1Iea/zc=",
+			"path": "gopkg.in/vbauerster/mpb.v3",
+			"revision": "c12801abeb3d47a415eeeb33769a2a7bc0d851b9",
+			"revisionTime": "2017-07-07T06:57:25Z"
+		}
+	],
+	"rootPath": "github.com/atakanozceviz/cpypst-secure"
+}

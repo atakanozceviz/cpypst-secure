@@ -1,0 +1,9 @@
+{{define "menu"}}
+<div id="cssmenu">
+    <ul>
+        <li {{if eq .Active "history" }} class="active" {{end}}><a href="/">HISTORY</a></li>
+        <li {{if eq .Active "connections" }} class="active" {{end}}><a href="/connections">CONNECTIONS</a></li>
+        <li {{if eq .Active "settings" }} class="active" {{end}}><a href="/settings">SETTINGS</a></li>
+    </ul>
+</div>
+{{end}}

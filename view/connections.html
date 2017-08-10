@@ -1,0 +1,119 @@
+{{define "connections"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Connections</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <style>
+        .mainheader {
+            grid-area: header;
+        }
+
+        .incoming {
+            grid-area: incoming;
+        }
+
+        .outgoing {
+            grid-area: outgoing;
+        }
+
+        .mainfooter {
+            grid-area: footer;
+        }
+
+        .wrapper {
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-row-gap: 0;
+            grid-template-areas: "header" "incoming" "outgoing" "footer";
+        }
+
+        @media (min-width: 900px) {
+            .wrapper {
+                grid-column-gap: 2em;
+                grid-row-gap: 0;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas: "header header" "incoming outgoing" "footer footer"
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+
+    <header class="mainheader">
+        {{template "menu" .}}
+    </header>
+
+    <div class="incoming">
+        <h3>Incoming Connections</h3>
+        <form>
+            <table style="width:100%">
+                <tr>
+                    <th>Connection</th>
+                    <th style="width:1%">Active</th>
+                    <th style="width:1%"></th>
+                </tr>
+                {{range $k,$v := .Incoming}}
+                <tr id="{{$k}}">
+                    <td>{{$v.Name}}({{$v.Ip}})</td>
+                    <td>{{$v.Active}}</td>
+                    <td>
+                        <button name="action" value="{{if $v.Active}}idisable{{end}}{{if not $v.Active}}ienable{{end}}">
+                            {{if $v.Active}}Disable{{end}}{{if not $v.Active}}Enable{{end}}
+                        </button>
+                    </td>
+                </tr>
+                {{end}}
+            </table>
+        </form>
+    </div>
+
+    <div class="outgoing">
+        <h3>Outgoing Connections</h3>
+        <form>
+            <table style="width:100%">
+                <tr>
+                    <th>Connection</th>
+                    <th style="width:1%">Active</th>
+                    <th style="width:1%"></th>
+                </tr>
+                {{range $k,$v := .Outgoing}}
+                <tr id="{{$k}}">
+                    <td>{{$v.Name}}({{$v.Ip}})</td>
+                    <td>{{$v.Active}}</td>
+                    <td>
+                        <button name="action" value="{{if $v.Active}}odisable{{end}}{{if not $v.Active}}oenable{{end}}">
+                            {{if $v.Active}}Disable{{end}}{{if not $v.Active}}Enable{{end}}
+                        </button>
+                    </td>
+                </tr>
+                {{end}}
+            </table>
+        </form>
+    </div>
+
+    <footer class="mainfooter"></footer>
+
+</div>
+<script src="static/jquery.js"></script>
+<script type="application/javascript">
+    $("button").click(function (e) {
+        e.preventDefault();
+        var id = $(this).closest('tr').attr('id');
+        var action = $(this).attr('value');
+        $.ajax({
+            url: '/action?action=' + action + '&ID=' + id,
+            success: window.location.reload(true)
+        });
+    })
+</script>
+</body>
+
+</html>
+{{end}}
