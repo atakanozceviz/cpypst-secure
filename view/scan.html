@@ -1,0 +1,144 @@
+{{define "scan"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Scan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <style>
+        .mainheader {
+            grid-area: header;
+        }
+
+        .scan {
+            grid-area: scan;
+        }
+
+        .mainfooter {
+            grid-area: footer;
+        }
+
+        .wrapper {
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-row-gap: 0;
+            grid-template-areas: "header" "scan" "footer";
+        }
+
+        table {
+            white-space: nowrap;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(255, 255, 255, .8) url('/static/loader.gif') 50% 50% no-repeat;
+        }
+
+        /* When the body has the loading class, we turn
+           the scrollbar off with overflow:hidden */
+        body.loading {
+            overflow: hidden;
+        }
+
+        /* Anytime the body has the loading class, our
+           modal element will be visible */
+        body.loading .modal {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+
+    <header class="mainheader">
+        {{template "menu" .}}
+    </header>
+
+    <div class="scan">
+        <div hidden id="results">
+            <form id="connector">
+                <table style="width:1%">
+                    <tr>
+                        <th>Name</th>
+                        <th style="width:1%">Ip</th>
+                        <th style="width:1%"></th>
+                    </tr>
+                    {{range $k,$v := .Servers}}
+                    <tr id="{{$k}}">
+                        <td>{{$v.Name}}</td>
+                        <td>{{$v.Ip}}</td>
+                        <td>
+                            <button id="connect" value="connect" onclick="connectSelected('{{$k}}');">
+                                Connect
+                            </button>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+            </form>
+        </div>
+        <br>
+        <form id="scanner">
+            <label for="ip">Enter ip to scan</label>
+            <input id="ip" required
+                   pattern="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$">
+            <button id="scan" value="scan">Scan</button>
+        </form>
+    </div>
+    <footer class="mainfooter"></footer>
+
+    <div class="modal"></div>
+
+    <script src="static/jquery.js"></script>
+    <script src="static/mask.js"></script>
+    <script type="application/javascript">
+        $(function () {
+
+            $body = $("body");
+
+            $(document).on({
+                ajaxStart: function () {
+                    $body.addClass("loading");
+                },
+                ajaxStop: function () {
+                    $body.removeClass("loading");
+                }
+            });
+
+            $('#ip').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+                translation: {
+                    'Z': {
+                        pattern: /[0-9]/, optional: true
+                    }
+                }
+            });
+            $("#scanner").submit(function (e) {
+                e.preventDefault();
+                $("#results").load("/scan?ip=" + $("#ip").val() + " #connector").show();
+            });
+        });
+
+        function connectSelected(id) {
+            $.ajax({
+                url: '/action?action=connect' + '&ID=' + id,
+                success: function (resp) {
+                    alert(resp)
+                }
+            });
+        }
+    </script>
+</div>
+</body>
+
+</html>
+{{end}}

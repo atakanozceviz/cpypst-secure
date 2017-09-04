@@ -12,4 +12,5 @@ type Settings struct {
 	OutgoingClip bool
 	IncomingFile bool
 	OutgoingFile bool
+	Hidden       bool
 }

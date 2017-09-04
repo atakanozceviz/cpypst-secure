@@ -11,6 +11,7 @@ import (
 )
 
 var SecretKey []byte
+var Port string
 
 func Sign(data model.Data) (string, error) {
 	// Create a new token object, specifying signing method and the claims
@@ -56,7 +57,7 @@ func Parse(ts string) (jwt.MapClaims, error) {
 
 func EncSend(action, from, content, ip string) (*http.Response, error) {
 	client := &http.Client{
-		Timeout: time.Duration(time.Second * 5),
+		Timeout: time.Duration(time.Second * 3),
 	}
 
 	enc, err := Sign(model.Data{Action: action, From: from, Content: content, Time: time.Now().Format(time.UnixDate)})
@@ -64,7 +65,7 @@ func EncSend(action, from, content, ip string) (*http.Response, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", "http://"+ip+":8080/"+action, bytes.NewBuffer([]byte(enc)))
+	req, err := http.NewRequest("POST", "http://"+ip+":"+Port+"/"+action, bytes.NewBuffer([]byte(enc)))
 	if err != nil {
 		return nil, err
 	}

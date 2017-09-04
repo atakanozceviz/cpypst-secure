@@ -22,6 +22,7 @@ var MPB = mpb.New(
 	mpb.WithWidth(64),
 	mpb.WithFormat("╢▌▌░╟"),
 )
+var winPath = regexp.MustCompile(`^([a-zA-Z]:|\\\\[^/\\:*?"<>|]+\\[^/\\:*?"<>|]+)(\\[^/\\:*?"<>|]+)+(\.[^/\\:*?"<>|]+)$`)
 
 func checkClip() {
 	var x string
@@ -48,8 +49,8 @@ func send(clip string) {
 	if len(addr) > 0 {
 		for _, v := range addr {
 			if v.Active == true {
-				if ok := path.IsAbs(clip); ok && Settings.OutgoingFile == true {
-					go postFile(clip, "http://"+v.Ip+":8080/upload", MPB)
+				if ok := path.IsAbs(clip); ok || winPath.Match([]byte(clip)) && Settings.OutgoingFile == true {
+					go postFile(clip, "http://"+v.Ip+":"+Port+"/upload", MPB)
 				} else if Settings.OutgoingClip == true {
 					_, err := EncSend("paste", lname, clip, v.Ip)
 					if err != nil {
@@ -86,7 +87,7 @@ func postFile(fp, url string, p *mpb.Progress) {
 		fmt.Println("Cannot send directory")
 		return
 	}
-	// create bar
+	// Create bar
 	bar := p.AddBar(info.Size(),
 		mpb.PrependDecorators(
 			decor.StaticName(info.Name()+"(send)", len(info.Name()), decor.DwidthSync|decor.DidentRight),
@@ -95,7 +96,7 @@ func postFile(fp, url string, p *mpb.Progress) {
 		mpb.AppendDecorators(decor.Percentage(5, 0)),
 	)
 
-	// create multi writer
+	// Create multi writer
 	writer := bar.ProxyReader(file)
 
 	req, err := http.NewRequest(http.MethodPost, url, writer)
@@ -119,16 +120,17 @@ func postFile(fp, url string, p *mpb.Progress) {
 	if len(message) > 0 {
 		log.Println(string(message))
 	}
-	// remove bar
+	// Remove bar
 	p.RemoveBar(bar)
 
 }
 
+// Start adding connections
 func Start() {
 	var addr string
 	for {
 		for {
-			fmt.Print("Enter ip address to add a connection: ")
+			fmt.Println("Enter ip address to add a connection: ")
 			n, _ := fmt.Scanln(&addr)
 			if n <= 0 {
 				fmt.Println("Address cannot be empty")
@@ -136,24 +138,28 @@ func Start() {
 			}
 			break
 		}
-
-		resp, err := EncSend("connect", lname, "", addr)
-		if err != nil {
+		if err := ConnectTo(addr); err != nil {
 			log.Println(err)
-			continue
-		}
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Println(err)
-			resp.Body.Close()
-			continue
-		}
-
-		Outgoing.Add(model.Connection{Ip: addr, Name: string(body), Active: true, Time: time.Now().Format(time.UnixDate)})
-		resp.Body.Close()
-		if len(Outgoing.Connections) == 1 {
-			go checkClip()
 		}
 	}
+}
+
+func ConnectTo(addr string) error {
+	resp, err := EncSend("connect", lname, "", addr)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	Outgoing.Add(model.Connection{Ip: addr, Name: string(body), Active: true, Time: time.Now().Format(time.UnixDate)})
+
+	if len(Outgoing.Connections) == 1 {
+		go checkClip()
+	}
+	return nil
 }

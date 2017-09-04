@@ -85,6 +85,15 @@
                         </button>
                     </td>
                 </tr>
+                <tr>
+                    <td>Hidden</td>
+                    <td>{{.Hidden}}</td>
+                    <td>
+                        <button name="action" value="hidden">
+                            {{if .Hidden}}Disable{{end}}{{if not .Hidden}}Enable{{end}}
+                        </button>
+                    </td>
+                </tr>
             </table>
         </form>
     </div>
