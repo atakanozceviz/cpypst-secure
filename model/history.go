@@ -11,18 +11,18 @@ type HistItem struct {
 }
 
 type History struct {
-	sync.Mutex
+	sync.RWMutex
 	History []HistItem
 }
 
 func (h *History) Add(item HistItem) {
 	h.Lock()
+	defer h.Unlock()
 	h.History = append(h.History, item)
-	h.Unlock()
 }
 
 func (h *History) Remove(i int) {
 	h.Lock()
+	defer h.Unlock()
 	h.History = append(h.History[:i], h.History[i+1:]...)
-	h.Unlock()
 }

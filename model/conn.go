@@ -12,33 +12,33 @@ type Connection struct {
 }
 
 type Connections struct {
-	sync.Mutex
+	sync.RWMutex
 	Connections map[string]*Connection
 }
 
 func (c *Connections) Add(con Connection) {
+	c.Lock()
+	defer c.Unlock()
 	if c.Connections == nil {
 		c.Connections = make(map[string]*Connection)
 	}
-	c.Lock()
 	c.Connections[con.Ip] = &con
-	c.Unlock()
 }
 
 func (c *Connections) Remove(con Connection) {
 	c.Lock()
+	defer c.Unlock()
 	delete(c.Connections, con.Ip)
-	c.Unlock()
 }
 
 func (c *Connections) Disable(con Connection) {
 	c.Lock()
+	defer c.Unlock()
 	c.Connections[con.Ip].Active = false
-	c.Unlock()
 }
 
 func (c *Connections) Enable(con Connection) {
 	c.Lock()
+	defer c.Unlock()
 	c.Connections[con.Ip].Active = true
-	c.Unlock()
 }

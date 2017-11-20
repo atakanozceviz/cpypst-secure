@@ -14,8 +14,8 @@ import (
 
 	"github.com/atakanozceviz/cpypst-secure/model"
 	"github.com/atotto/clipboard"
+	"github.com/vbauerster/mpb"
 	"github.com/vbauerster/mpb/decor"
-	"gopkg.in/vbauerster/mpb.v3"
 )
 
 var tmp model.Tmp

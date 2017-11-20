@@ -15,10 +15,10 @@
 			"revisionTime": "2016-02-19T03:44:21Z"
 		},
 		{
-			"checksumSHA1": "GXOurDGgsLmJs0wounpdWZZRSGw=",
+			"checksumSHA1": "+TKtBzv23ywvmmqRiGEjUba4YmI=",
 			"path": "github.com/dgrijalva/jwt-go",
-			"revision": "a539ee1a749a2b895533f979515ac7e6e0f5b650",
-			"revisionTime": "2017-06-08T00:51:49Z"
+			"revision": "dbeaa9332f19a944acb5736b4456cfcc02140e29",
+			"revisionTime": "2017-10-19T21:57:19Z"
 		},
 		{
 			"checksumSHA1": "7DxViusFRJ7UPH0jZqYatwDrOkY=",
@@ -27,34 +27,34 @@
 			"revisionTime": "2017-02-27T21:27:28Z"
 		},
 		{
-			"checksumSHA1": "U6lX43KDDlNOn+Z0Yyww+ZzHfFo=",
+			"checksumSHA1": "w5RcOnfv5YDr3j2bd1YydkPiZx4=",
 			"path": "github.com/mattn/go-isatty",
-			"revision": "fc9e8d8ef48496124e79ae0df75490096eccf6fe",
-			"revisionTime": "2017-03-22T23:44:13Z"
+			"revision": "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c",
+			"revisionTime": "2017-11-07T05:05:31Z"
 		},
 		{
-			"checksumSHA1": "VdpS+VIg+3+lhy02Qtu/0E4L5Co=",
+			"checksumSHA1": "IBiKC6kG+VcBSN3ueuAawYJwUcI=",
+			"path": "github.com/vbauerster/mpb",
+			"revision": "d3da256ab98a80013319df621e48db638748c044",
+			"revisionTime": "2017-11-15T07:32:52Z"
+		},
+		{
+			"checksumSHA1": "58HYXA72gleJaTet4fr6/nmVvO8=",
 			"path": "github.com/vbauerster/mpb/cwriter",
-			"revision": "be19f2ae49b66657213af516b02fd0fac2a3ed2f",
-			"revisionTime": "2017-07-31T14:43:34Z"
+			"revision": "d3da256ab98a80013319df621e48db638748c044",
+			"revisionTime": "2017-11-15T07:32:52Z"
 		},
 		{
-			"checksumSHA1": "erTm5uJPT/2QrsITxxrfFfcv8wI=",
+			"checksumSHA1": "gIzt8Qkxnb3VLmp1TvkNJ4UPXMs=",
 			"path": "github.com/vbauerster/mpb/decor",
-			"revision": "be19f2ae49b66657213af516b02fd0fac2a3ed2f",
-			"revisionTime": "2017-07-31T14:43:34Z"
+			"revision": "d3da256ab98a80013319df621e48db638748c044",
+			"revisionTime": "2017-11-15T07:32:52Z"
 		},
 		{
-			"checksumSHA1": "Ws4nftdYhMEd8vZPFv1CMy1N8Nw=",
+			"checksumSHA1": "wpWClDus8W+4nf59NoxJY5Omz6M=",
 			"path": "golang.org/x/sys/unix",
-			"revision": "e42485b6e20ae7d2304ec72e535b103ed350cc02",
-			"revisionTime": "2017-08-09T17:40:02Z"
-		},
-		{
-			"checksumSHA1": "jtHnJffox9d+MoMv//vu1Iea/zc=",
-			"path": "gopkg.in/vbauerster/mpb.v3",
-			"revision": "c12801abeb3d47a415eeeb33769a2a7bc0d851b9",
-			"revisionTime": "2017-07-07T06:57:25Z"
+			"revision": "0ac51a24ef1c37380f98ba8b98f56e3bffd59850",
+			"revisionTime": "2017-11-18T17:35:49Z"
 		}
 	],
 	"rootPath": "github.com/atakanozceviz/cpypst-secure"

@@ -3,6 +3,7 @@ package mpb
 import (
 	"io"
 	"os"
+	"runtime"
 	"sync"
 	"time"
 
@@ -14,17 +15,19 @@ type (
 	BeforeRender func([]*Bar)
 
 	widthSync struct {
-		listen []chan int
-		result []chan int
+		Listen []chan int
+		Result []chan int
 	}
 
 	// progress config, fields are adjustable by user indirectly
 	pConf struct {
 		bars []*Bar
 
+		idCounter    int
 		width        int
 		format       string
 		rr           time.Duration
+		ewg          *sync.WaitGroup
 		cw           *cwriter.Writer
 		ticker       *time.Ticker
 		beforeRender BeforeRender
@@ -46,8 +49,10 @@ const (
 
 // Progress represents the container that renders Progress bars
 type Progress struct {
-	// WaitGroup for internal rendering sync
+	// wg for internal rendering sync
 	wg *sync.WaitGroup
+	// External wg
+	ewg *sync.WaitGroup
 
 	// quit channel to request p.server to quit
 	quit chan struct{}
@@ -74,6 +79,7 @@ func New(options ...ProgressOption) *Progress {
 	}
 
 	p := &Progress{
+		ewg:  conf.ewg,
 		wg:   new(sync.WaitGroup),
 		done: make(chan struct{}),
 		ops:  make(chan func(*pConf)),
@@ -85,19 +91,19 @@ func New(options ...ProgressOption) *Progress {
 
 // AddBar creates a new progress bar and adds to the container.
 func (p *Progress) AddBar(total int64, options ...BarOption) *Bar {
+	p.wg.Add(1)
 	result := make(chan *Bar, 1)
-	op := func(c *pConf) {
-		options = append(options, barWidth(c.width), barFormat(c.format))
-		b := newBar(total, p.wg, c.cancel, options...)
-		c.bars = append(c.bars, b)
-		p.wg.Add(1)
-		result <- b
-	}
 	select {
-	case p.ops <- op:
+	case p.ops <- func(c *pConf) {
+		options = append(options, barWidth(c.width), barFormat(c.format))
+		b := newBar(c.idCounter, total, p.wg, c.cancel, options...)
+		c.bars = append(c.bars, b)
+		c.idCounter++
+		result <- b
+	}:
 		return <-result
 	case <-p.quit:
-		return nil
+		return new(Bar)
 	}
 }
 
@@ -138,11 +144,14 @@ func (p *Progress) BarCount() int {
 	}
 }
 
-// Stop shutdowns Progress' goroutine.
-// Should be called only after each bar's work done, i.e. bar has reached its
-// 100 %. It is NOT for cancelation. Use WithContext or WithCancel for
-// cancelation purposes.
+// Stop is a way to gracefully shutdown mpb's rendering goroutine.
+// It is NOT for cancelation (use mpb.WithContext for cancelation purposes).
+// If *sync.WaitGroup has been provided via mpb.WithWaitGroup(), its Wait()
+// method will be called first.
 func (p *Progress) Stop() {
+	if p.ewg != nil {
+		p.ewg.Wait()
+	}
 	select {
 	case <-p.quit:
 		return
@@ -187,6 +196,7 @@ func (p *Progress) server(conf pConf) {
 		case <-conf.ticker.C:
 			numBars := len(conf.bars)
 			if numBars == 0 {
+				runtime.Gosched()
 				break
 			}
 
@@ -205,15 +215,12 @@ func (p *Progress) server(conf pConf) {
 
 			tw, _, _ := cwriter.GetTermSize()
 
-			flushed := make(chan struct{})
 			sequence := make([]<-chan []byte, numBars)
 			for i, b := range conf.bars {
-				sequence[i] = b.render(tw, flushed, prependWs, appendWs)
+				sequence[i] = b.render(tw, prependWs, appendWs)
 			}
 
-			ch := fanIn(sequence...)
-
-			for buf := range ch {
+			for buf := range fanIn(sequence...) {
 				conf.cw.Write(buf)
 			}
 
@@ -222,7 +229,6 @@ func (p *Progress) server(conf pConf) {
 			}
 
 			conf.cw.Flush()
-			close(flushed)
 		case <-conf.cancel:
 			conf.ticker.Stop()
 			conf.cancel = nil
@@ -237,12 +243,12 @@ func (p *Progress) server(conf pConf) {
 
 func newWidthSync(timeout <-chan struct{}, numBars, numColumn int) *widthSync {
 	ws := &widthSync{
-		listen: make([]chan int, numColumn),
-		result: make([]chan int, numColumn),
+		Listen: make([]chan int, numColumn),
+		Result: make([]chan int, numColumn),
 	}
 	for i := 0; i < numColumn; i++ {
-		ws.listen[i] = make(chan int, numBars)
-		ws.result[i] = make(chan int, numBars)
+		ws.Listen[i] = make(chan int, numBars)
+		ws.Result[i] = make(chan int, numBars)
 	}
 	for i := 0; i < numColumn; i++ {
 		go func(listenCh <-chan int, resultCh chan<- int) {
@@ -267,7 +273,7 @@ func newWidthSync(timeout <-chan struct{}, numBars, numColumn int) *widthSync {
 			for i := 0; i < len(widths); i++ {
 				resultCh <- result
 			}
-		}(ws.listen[i], ws.result[i])
+		}(ws.Listen[i], ws.Result[i])
 	}
 	return ws
 }
