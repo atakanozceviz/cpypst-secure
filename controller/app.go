@@ -67,7 +67,5 @@ func StartApp(port string) error {
 	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 		UploadHandler(w, r, MPB)
 	})
-
-	log.Fatal(http.ListenAndServe(":"+port, nil))
-	return nil
+	return http.ListenAndServe(":"+port, nil)
 }

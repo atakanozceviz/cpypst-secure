@@ -47,6 +47,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request, p *mpb.Progress) {
 				),
 				mpb.AppendDecorators(decor.Percentage(5, 0)),
 			)
+			// Remove bar
+			defer p.RemoveBar(bar)
 
 			// Create proxy reader
 			reader := bar.ProxyReader(r.Body)
@@ -58,9 +60,6 @@ func UploadHandler(w http.ResponseWriter, r *http.Request, p *mpb.Progress) {
 				log.Println(err)
 			}
 			w.Write([]byte(fmt.Sprintf("%d bytes are recieved.\n", n)))
-
-			// Remove bar
-			p.RemoveBar(bar)
 
 			dir, err := filepath.Abs("./tmp/" + filename)
 			if err != nil {
