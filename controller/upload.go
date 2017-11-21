@@ -40,12 +40,19 @@ func UploadHandler(w http.ResponseWriter, r *http.Request, p *mpb.Progress) {
 			defer dest.Close()
 
 			// Create and start bar
+			fn := ""
+			if len(filename) > 25 {
+				fn = filename[:20] + "..."
+			} else {
+				fn = filename
+			}
 			bar := p.AddBar(filesize,
 				mpb.PrependDecorators(
-					decor.StaticName(filename+"(receive)", 0, decor.DwidthSync|decor.DidentRight),
+					decor.StaticName(fn+"(receive)", 0, decor.DwidthSync|decor.DidentRight),
 					decor.Counters("%3s / %3s", decor.Unit_kB, 18, decor.DSyncSpace),
 				),
 				mpb.AppendDecorators(decor.Percentage(5, 0)),
+				mpb.BarTrim(),
 			)
 			// Remove bar
 			defer p.RemoveBar(bar)

@@ -92,9 +92,15 @@ func postFile(fp, url string, p *mpb.Progress) {
 		return
 	}
 	// Create bar
+	fn := ""
+	if len(info.Name()) > 25 {
+		fn = info.Name()[:20] + "..."
+	} else {
+		fn = info.Name()
+	}
 	bar := p.AddBar(info.Size(),
 		mpb.PrependDecorators(
-			decor.StaticName(info.Name()+"(send)", len(info.Name()), decor.DwidthSync|decor.DidentRight),
+			decor.StaticName(fn+"(send)", len(info.Name()), decor.DwidthSync|decor.DidentRight),
 			decor.Counters("%3s / %3s", decor.Unit_kB, 18, decor.DSyncSpace),
 		),
 		mpb.AppendDecorators(decor.Percentage(5, 0)),
