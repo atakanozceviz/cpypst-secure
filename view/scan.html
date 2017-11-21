@@ -61,7 +61,7 @@
 <div class="wrapper">
 
     <header class="mainheader">
-        {{template "menu" .}}
+    {{template "menu" .}}
     </header>
 
     <div class="scan">
@@ -73,7 +73,7 @@
                         <th style="width:1%">Ip</th>
                         <th style="width:1%"></th>
                     </tr>
-                    {{range $k,$v := .Servers}}
+                {{range $k,$v := .Servers}}
                     <tr id="{{$k}}">
                         <td>{{$v.Name}}</td>
                         <td>{{$v.Ip}}</td>
@@ -83,14 +83,14 @@
                             </button>
                         </td>
                     </tr>
-                    {{end}}
+                {{end}}
                 </table>
             </form>
         </div>
         <br>
         <form id="scanner">
             <label for="ip">Enter ip to scan</label>
-            <input id="ip" required
+            <input id="ip"
                    pattern="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$">
             <button id="scan" value="scan">Scan</button>
         </form>
@@ -124,7 +124,7 @@
             });
             $("#scanner").submit(function (e) {
                 e.preventDefault();
-                $("#results").load("/scan?ip=" + $("#ip").val() + " #connector").show();
+                $("#results").load("/scan?c=true&ip=" + $("#ip").val() + " #connector").show();
             });
         });
 

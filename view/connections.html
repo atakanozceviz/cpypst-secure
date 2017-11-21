@@ -47,7 +47,7 @@
 <div class="wrapper">
 
     <header class="mainheader">
-        {{template "menu" .}}
+    {{template "menu" .}}
     </header>
 
     <div class="incoming">
@@ -59,17 +59,17 @@
                     <th style="width:1%">Active</th>
                     <th style="width:1%"></th>
                 </tr>
-                {{range $k,$v := .Incoming}}
+            {{range $k,$v := .Incoming}}
                 <tr id="{{$k}}">
                     <td>{{$v.Name}}({{$v.Ip}})</td>
                     <td>{{$v.Active}}</td>
                     <td>
                         <button name="action" value="{{if $v.Active}}idisable{{end}}{{if not $v.Active}}ienable{{end}}">
-                            {{if $v.Active}}Disable{{end}}{{if not $v.Active}}Enable{{end}}
+                        {{if $v.Active}}Disable{{end}}{{if not $v.Active}}Enable{{end}}
                         </button>
                     </td>
                 </tr>
-                {{end}}
+            {{end}}
             </table>
         </form>
     </div>
@@ -83,17 +83,17 @@
                     <th style="width:1%">Active</th>
                     <th style="width:1%"></th>
                 </tr>
-                {{range $k,$v := .Outgoing}}
+            {{range $k,$v := .Outgoing}}
                 <tr id="{{$k}}">
                     <td>{{$v.Name}}({{$v.Ip}})</td>
                     <td>{{$v.Active}}</td>
                     <td>
                         <button name="action" value="{{if $v.Active}}odisable{{end}}{{if not $v.Active}}oenable{{end}}">
-                            {{if $v.Active}}Disable{{end}}{{if not $v.Active}}Enable{{end}}
+                        {{if $v.Active}}Disable{{end}}{{if not $v.Active}}Enable{{end}}
                         </button>
                     </td>
                 </tr>
-                {{end}}
+            {{end}}
             </table>
         </form>
     </div>

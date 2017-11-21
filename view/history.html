@@ -34,7 +34,7 @@
 <div class="wrapper">
 
     <header class="mainheader">
-        {{template "menu" .}}
+    {{template "menu" .}}
     </header>
 
     <div class="history">
@@ -46,7 +46,7 @@
                     <th style="width:1%"></th>
                     <th style="width:1%"></th>
                 </tr>
-                {{range $ID,$v := .History}}
+            {{range $ID,$v := .History}}
                 <tr id="{{$ID}}">
                     <td>{{(index $.Incoming $v.Ip).Name}}</td>
                     <td>{{$v.Content}}</td>
@@ -57,7 +57,7 @@
                         <button name="action" value="dlt">Delete</button>
                     </td>
                 </tr>
-                {{end}}
+            {{end}}
             </table>
         </form>
     </div>
