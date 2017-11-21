@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/atakanozceviz/cpypst-secure/model"
@@ -18,11 +19,18 @@ import (
 	"github.com/vbauerster/mpb/decor"
 )
 
-var MPB = mpb.New(
-	mpb.WithWidth(64),
-	mpb.WithFormat("╢▌▌░╟"),
+var (
+	MPB = mpb.New(
+		mpb.WithWidth(64),
+		mpb.WithFormat("╢▌▌░╟"),
+	)
+
+	tmp      model.Tmp
+	clip     model.Tmp
+	lname, _ = os.Hostname()
+	re       = regexp.MustCompile(`:[0-9]+`)
+	winPath  = regexp.MustCompile(`^"?([a-zA-Z]:|\\\\[^/\\:*?"<>|]+\\[^/\\:*?"<>|]+)(\\[^/\\:*?"<>|]+)+(\.[^/\\:*?"<>|]+)"?$`)
 )
-var winPath = regexp.MustCompile(`^([a-zA-Z]:|\\\\[^/\\:*?"<>|]+\\[^/\\:*?"<>|]+)(\\[^/\\:*?"<>|]+)+(\.[^/\\:*?"<>|]+)$`)
 
 func checkClip() {
 	var x string
@@ -50,6 +58,8 @@ func send(clip string) {
 		for _, v := range addr {
 			if v.Active == true {
 				if ok := path.IsAbs(clip); ok || winPath.Match([]byte(clip)) && Settings.OutgoingFile == true {
+					clip = strings.TrimSpace(clip)
+					clip = strings.Trim(clip, "\"")
 					go postFile(clip, "http://"+v.Ip+":"+Port+"/upload", MPB)
 				} else if Settings.OutgoingClip == true {
 					_, err := EncSend("paste", lname, clip, v.Ip)
@@ -64,12 +74,6 @@ func send(clip string) {
 
 func postFile(fp, url string, p *mpb.Progress) {
 	fp, _ = filepath.Abs(fp)
-	re, err := regexp.Compile("[\r\n]")
-	if err != nil {
-		log.Println(err)
-	}
-
-	fp = re.ReplaceAllString(fp, "")
 
 	file, err := os.Open(fp)
 	if err != nil {
@@ -95,6 +99,8 @@ func postFile(fp, url string, p *mpb.Progress) {
 		),
 		mpb.AppendDecorators(decor.Percentage(5, 0)),
 	)
+	// Remove bar
+	defer p.RemoveBar(bar)
 
 	// Create multi writer
 	writer := bar.ProxyReader(file)
@@ -119,28 +125,6 @@ func postFile(fp, url string, p *mpb.Progress) {
 
 	if len(message) > 0 {
 		log.Println(string(message))
-	}
-	// Remove bar
-	p.RemoveBar(bar)
-
-}
-
-// Start adding connections
-func Start() {
-	var addr string
-	for {
-		for {
-			fmt.Println("Enter ip address to add a connection: ")
-			n, _ := fmt.Scanln(&addr)
-			if n <= 0 {
-				fmt.Println("Address cannot be empty")
-				continue
-			}
-			break
-		}
-		if err := ConnectTo(addr); err != nil {
-			log.Println(err)
-		}
 	}
 }
 
