@@ -88,6 +88,10 @@ func SettingsUI(w http.ResponseWriter, r *http.Request) {
 
 func ScanUI(w http.ResponseWriter, r *http.Request) {
 	tpl := template.Must(template.New("settings", view.Asset).ParseFiles("view/scan.html", "view/_menu.html"))
+	if r.Method == "GET" {
+		tpl.ExecuteTemplate(w, "scan", nil)
+		return
+	}
 	servers := model.Connections{}
 	// get ip from form
 	addr := r.FormValue("ip")
