@@ -14,10 +14,10 @@
 package view
 
 import (
-	"github.com/elazarl/go-bindata-assetfs"
 	"bytes"
 	"compress/gzip"
 	"fmt"
+	"github.com/elazarl/go-bindata-assetfs"
 	"io"
 	"io/ioutil"
 	"os"
@@ -309,15 +309,15 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"view/_menu.html": view_menuHtml,
-	"view/connections.html": viewConnectionsHtml,
-	"view/history.html": viewHistoryHtml,
-	"view/scan.html": viewScanHtml,
-	"view/settings.html": viewSettingsHtml,
-	"view/static/jquery.js": viewStaticJqueryJs,
+	"view/_menu.html":        view_menuHtml,
+	"view/connections.html":  viewConnectionsHtml,
+	"view/history.html":      viewHistoryHtml,
+	"view/scan.html":         viewScanHtml,
+	"view/settings.html":     viewSettingsHtml,
+	"view/static/jquery.js":  viewStaticJqueryJs,
 	"view/static/loader.gif": viewStaticLoaderGif,
-	"view/static/mask.js": viewStaticMaskJs,
-	"view/static/style.css": viewStaticStyleCss,
+	"view/static/mask.js":    viewStaticMaskJs,
+	"view/static/style.css":  viewStaticStyleCss,
 }
 
 // AssetDir returns the file names below a certain
@@ -359,18 +359,19 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
 	"view": &bintree{nil, map[string]*bintree{
-		"_menu.html": &bintree{view_menuHtml, map[string]*bintree{}},
+		"_menu.html":       &bintree{view_menuHtml, map[string]*bintree{}},
 		"connections.html": &bintree{viewConnectionsHtml, map[string]*bintree{}},
-		"history.html": &bintree{viewHistoryHtml, map[string]*bintree{}},
-		"scan.html": &bintree{viewScanHtml, map[string]*bintree{}},
-		"settings.html": &bintree{viewSettingsHtml, map[string]*bintree{}},
+		"history.html":     &bintree{viewHistoryHtml, map[string]*bintree{}},
+		"scan.html":        &bintree{viewScanHtml, map[string]*bintree{}},
+		"settings.html":    &bintree{viewSettingsHtml, map[string]*bintree{}},
 		"static": &bintree{nil, map[string]*bintree{
-			"jquery.js": &bintree{viewStaticJqueryJs, map[string]*bintree{}},
+			"jquery.js":  &bintree{viewStaticJqueryJs, map[string]*bintree{}},
 			"loader.gif": &bintree{viewStaticLoaderGif, map[string]*bintree{}},
-			"mask.js": &bintree{viewStaticMaskJs, map[string]*bintree{}},
-			"style.css": &bintree{viewStaticStyleCss, map[string]*bintree{}},
+			"mask.js":    &bintree{viewStaticMaskJs, map[string]*bintree{}},
+			"style.css":  &bintree{viewStaticStyleCss, map[string]*bintree{}},
 		}},
 	}},
 }}
@@ -421,7 +422,6 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-
 
 func AssetFS() *assetfs.AssetFS {
 	assetInfo := func(path string) (os.FileInfo, error) {

@@ -55,14 +55,14 @@ func send(clip string) {
 	addr := Outgoing.Connections
 
 	if len(addr) > 0 {
-		for _, v := range addr {
-			if v.Active == true {
+		for _, conn := range addr {
+			if conn.Active == true {
 				if ok := path.IsAbs(clip); ok || winPath.Match([]byte(clip)) && Settings.OutgoingFile == true {
 					clip = strings.TrimSpace(clip)
 					clip = strings.Trim(clip, "\"")
-					go postFile(clip, "http://"+v.Ip+":"+Port+"/upload", MPB)
+					go postFile(clip, conn, MPB)
 				} else if Settings.OutgoingClip == true {
-					_, err := EncSend("paste", lname, clip, v.Ip)
+					_, err := EncSend("paste", lname, clip, conn.Ip)
 					if err != nil {
 						log.Println(err)
 					}
@@ -72,7 +72,7 @@ func send(clip string) {
 	}
 }
 
-func postFile(fp, url string, p *mpb.Progress) {
+func postFile(fp string, conn *model.Connection, p *mpb.Progress) {
 	fp, _ = filepath.Abs(fp)
 
 	file, err := os.Open(fp)
@@ -108,10 +108,10 @@ func postFile(fp, url string, p *mpb.Progress) {
 	// Remove bar
 	defer p.RemoveBar(bar)
 
-	// Create multi writer
-	writer := bar.ProxyReader(file)
+	// Create ProxyReader
+	reader := bar.ProxyReader(file)
 
-	req, err := http.NewRequest(http.MethodPost, url, writer)
+	req, err := http.NewRequest(http.MethodPost, "http://"+conn.Ip+":"+Port+"/upload", reader)
 	if err != nil {
 		log.Println(err)
 		return
@@ -130,7 +130,7 @@ func postFile(fp, url string, p *mpb.Progress) {
 	message, _ := ioutil.ReadAll(res.Body)
 
 	if len(message) > 0 {
-		log.Println(string(message))
+		fmt.Printf("%s -> %s", conn.Name, message)
 	}
 }
 
@@ -145,8 +145,14 @@ func ConnectTo(addr string) error {
 		return err
 	}
 	defer resp.Body.Close()
-
-	Outgoing.Add(model.Connection{Ip: addr, Name: string(body), Active: true, Time: time.Now().Format(time.UnixDate)})
+	data, err := Parse(string(body))
+	if err != nil {
+		Outgoing.Remove(model.Connection{Ip: addr})
+		return err
+	}
+	if data["Action"] == "name" {
+		Outgoing.Add(model.Connection{Ip: addr, Name: data["From"].(string), Active: true, Time: time.Now().Format(time.UnixDate)})
+	}
 
 	if len(Outgoing.Connections) == 1 {
 		go checkClip()

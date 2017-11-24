@@ -32,8 +32,21 @@ func ConnectHandler(w http.ResponseWriter, r *http.Request) {
 			name := data["From"].(string)
 			ip := re.ReplaceAllString(addr, "")
 			Incoming.Add(model.Connection{Ip: ip, Name: name, Active: true, Time: time.Now().Format(time.UnixDate)})
-			w.Write([]byte(lname))
-			fmt.Println("\n" + name + " (" + ip + ") is connected!")
+
+			resp, err := Sign(model.Data{Action: "name", Content: lname, From: lname, Time: time.Now().Format(time.UnixDate)})
+			if err != nil {
+				log.Println(err)
+			}
+			w.Write([]byte(resp))
+			// Connect to who is connected
+			if !Outgoing.Has(ip) {
+				Outgoing.Add(model.Connection{Ip: ip, Name: name, Active: true, Time: time.Now().Format(time.UnixDate)})
+				if err := ConnectTo(ip); err != nil {
+					log.Println(err)
+				}
+			}
+
+			fmt.Printf("\n%s (%s) is connected!\n", name, ip)
 			return
 		}
 	}

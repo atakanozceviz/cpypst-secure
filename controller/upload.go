@@ -78,6 +78,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request, p *mpb.Progress) {
 
 			// Add to history
 			History.Add(model.HistItem{Content: dir, Time: time.Now().Format(time.UnixDate), Ip: ip})
+
+			return
 		}
 	} else {
 		w.Write([]byte(lname + " disabled incoming file!"))

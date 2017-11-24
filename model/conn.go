@@ -42,3 +42,12 @@ func (c *Connections) Enable(con Connection) {
 	defer c.Unlock()
 	c.Connections[con.Ip].Active = true
 }
+
+func (c *Connections) Has(ip string) bool {
+	c.Lock()
+	defer c.Unlock()
+	if _, ok := c.Connections[ip]; ok {
+		return true
+	}
+	return false
+}

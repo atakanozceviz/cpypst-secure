@@ -2,8 +2,10 @@ package controller
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/atakanozceviz/cpypst-secure/model"
@@ -33,6 +35,10 @@ func Sign(data model.Data) (string, error) {
 func Parse(ts string) (jwt.MapClaims, error) {
 	// sample token string taken from the New example
 	tokenString := ts
+	parts := strings.Split(tokenString, ".")
+	if len(parts) != 3 {
+		return nil, errors.New("token contains an invalid number of segments")
+	}
 
 	// Parse takes the token string and a function for looking up the key. The latter is especially
 	// useful if you use multiple keys for your application.  The standard is to use 'kid' in the
